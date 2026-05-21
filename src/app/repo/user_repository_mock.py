@@ -1,0 +1,26 @@
+from ..entities.user import User
+
+
+# mock armazena os dados de forma local
+# self user cria um usuário fixo na memória e devolve o resultado no return
+class UserRepositoryMock:
+
+    user: User
+
+    def __init__(self):
+
+        self.user = User(
+            name="Vitor Soller",
+            agency="0000",
+            account="00000-0",
+            current_balance=1000.0
+        )
+
+    def get_user(self) -> User:
+        return self.user
+
+    def update_balance(self, new_balance: float) -> User:
+
+        self.user.current_balance = new_balance
+
+        return self.user

@@ -11,6 +11,8 @@ from .entities.item import Item
 
 from .entities.user import User
 
+from .repo.user_repository_mock import UserRepositoryMock
+
 
 app = FastAPI()
 
@@ -20,9 +22,7 @@ repo = Environments.get_item_repo()()
 # elas interagem com os métodos de repositório. por exemplo a rota create item chama, não exclusivamente,
 # o método repo.create_item() para criar o item no nosso repositório
 
-user = User(
-    name="Vitor Soller", agency="0000", account="00000-0", current_balance=1000.0
-)
+user_repo = UserRepositoryMock()
 
 @app.get("/items/get_all_items")
 def get_all_items():
@@ -149,6 +149,7 @@ def update_item(request: dict):
     
 @app.get("/")
 def get_user():
+    user = user_repo.get_user()
     return user.to_dict()
 
 handler = Mangum(app, lifespan="off")
