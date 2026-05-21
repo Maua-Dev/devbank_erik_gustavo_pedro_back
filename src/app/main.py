@@ -9,6 +9,8 @@ from .enums.item_type_enum import ItemTypeEnum
 
 from .entities.item import Item
 
+from .entities.user import User
+
 
 app = FastAPI()
 
@@ -17,6 +19,10 @@ repo = Environments.get_item_repo()()
 # a baixo estão as rotas da api
 # elas interagem com os métodos de repositório. por exemplo a rota create item chama, não exclusivamente,
 # o método repo.create_item() para criar o item no nosso repositório
+
+user = User(
+    name="Vitor Soller", agency="0000", account="00000-0", current_balance=1000.0
+)
 
 @app.get("/items/get_all_items")
 def get_all_items():
@@ -141,6 +147,8 @@ def update_item(request: dict):
         "item": item_updated.to_dict()    
     }
     
-
+@app.get("/")
+def get_user():
+    return user.to_dict()
 
 handler = Mangum(app, lifespan="off")
