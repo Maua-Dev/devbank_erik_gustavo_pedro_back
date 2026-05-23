@@ -1,5 +1,5 @@
 from ..entities.user import User
-from .entities.transacoes import Transacoes
+from ..entities.transacao import Transacao
 
 # mock armazena os dados de forma local
 # self user cria um usuário fixo na memória e devolve o resultado no return

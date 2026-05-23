@@ -12,8 +12,8 @@ from .entities.item import Item
 from .entities.user import User
 
 from .repo.user_repository_mock import UserRepositoryMock
+from .entities.transacao import Transacao
 
-from .repo.transacoes_repository_mock import TransacoesRepositoryMock
 
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -28,7 +28,6 @@ repo = Environments.get_item_repo()()
 # o método repo.create_item() para criar o item no nosso repositório
 
 user_repo = UserRepositoryMock()
-transacoes_repo = TransacoesRepositoryMock()
 
 @app.get("/items/get_all_items")
 def get_all_items():
@@ -172,7 +171,6 @@ def deposit(request: dict):
         current_balance=user.current_balance,
         timestamp=timestamp
     )
-    transacoes_repo.add_transacao(transacao)
     return {
         "current_balance": user.current_balance,
         "timestamp": timestamp
@@ -196,7 +194,6 @@ def withdraw(request: dict):
         current_balance=updated_user.current_balance,
         timestamp=timestamp
     )
-    transacoes_repo.add_transacao(transacao)
     return {
         "current_balance": updated_user.current_balance,
         "timestamp": timestamp

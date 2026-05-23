@@ -26,4 +26,3 @@ class Transacao:
         except ValueError:
             raise ValueError(False)
         
-print(Transacao("A"))

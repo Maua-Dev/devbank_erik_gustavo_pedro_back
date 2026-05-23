@@ -1,1 +1,1 @@
-from ..entities.transacao import Transacoes
+from ..entities.transacao import Transacao
