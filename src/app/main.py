@@ -15,7 +15,8 @@ from .repo.user_repository_mock import UserRepositoryMock
 
 from .repo.transacoes_repository_mock import TransacoesRepositoryMock
 
-import time
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 
 app = FastAPI()
@@ -164,11 +165,11 @@ def deposit(request: dict):
     if value <= 0:
         return {"error": "invalid value"}
     user = user_repo.deposit(value)
-    timestamp = time.time() * 1000
-    transacao = Transacoes(
-        operacao="deposit",
-        valor=value,
-        saldo_atual=user.current_balance,
+    timestamp = datetime.now(tz=ZoneInfo('America/Sao_Paulo')).timestamp()
+    transacao = Transacao(
+        type="deposit",
+        value=value,
+        current_balance=user.current_balance,
         timestamp=timestamp
     )
     transacoes_repo.add_transacao(transacao)
@@ -181,17 +182,18 @@ def deposit(request: dict):
 @app.post("/withdraw")
 def withdraw(request: dict):
     value = request.get("value")
-    if value <= 0:
-        return {"error": "invalid value"}
+    if value == float or value == int:
+        if value <= 0:
+            return {"error": "invalid value"}
     user = user_repo.get_user()
     if user.current_balance < value:
         return {"error": "insufficient balance"}
     updated_user = user_repo.withdraw(value)
-    timestamp = time.time() * 1000
-    transacao = Transacoes(
-        operacao="withdraw",
-        valor=value,
-        saldo_atual=updated_user.current_balance,
+    timestamp = int(datetime.now().timestamp() * 1000)
+    transacao = Transacao(
+        type="withdraw",
+        value=value,
+        current_balance=updated_user.current_balance,
         timestamp=timestamp
     )
     transacoes_repo.add_transacao(transacao)
