@@ -19,16 +19,10 @@ class UserRepositoryMock:
     def get_user(self) -> User:
         return self.user
 
-    def update_balance(self, new_balance: float) -> User:
-        self.user.current_balance = new_balance
-        return self.user
-
-    # deposit: adiciona saldo na conta do user
     def deposit(self, value: float) -> User:
         self.user.current_balance += value
         return self.user
 
-    # withdraw: remove saldo do usuario
     def withdraw( self, value: float) -> User:
         self.user.current_balance -= value
         return self.user

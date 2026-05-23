@@ -1,46 +1,66 @@
 from ..enums.transaction_type_enum import TransactionTypeEnum
-import datetime
+from datetime import datetime
+from ..errors.entity_errors import ParamNotValidated
 
 class Transacao:
-    type: TransactionTypeEnum
-    value: float
-    current_balance: float
-    timestamp: int
+    __type: TransactionTypeEnum
+    __value: float
+    __current_balance: float
+    __timestamp: int
 
-    def __init__(self, type, value, current_balance, timestamp):
-        if self.valida_tipo(type) == False:
-            raise ValueError("O valor deve ser deposit ou withdraw.")
-        else:
-            self.type = self.valida_tipo(type)
-
+    def __init__(
+            self,
+            type: str,
+            value: float, 
+            current_balance: float, 
+            ):
+        
+        self.type = type
         self.value = value
         self.current_balance = current_balance
-        self.timestamp = int( datetime.now().timestamp() * 1000)
+        self.timestamp = int(datetime.now().timestamp() * 1000)
 
-
-        
-
-    def valida_tipo(self, tipo:str):
+    @property
+    def type(self):
+        return self.__type
+    @type.setter
+    def type(self, tipo):
+        if not isinstance(tipo, str):
+            raise ParamNotValidated("type", "must be of type str")
         try:
             tipo = TransactionTypeEnum(tipo)
-            self.type = tipo
-        
+            self.__type = tipo
         except ValueError:
-            raise ValueError(False)
+            raise ParamNotValidated('type', 'invalid transaction type')
         
-    def validar_value(self, value):
-        value = self.valida_tipo(value)
+    @property
+    def value(self):
+        return self.__value
+    @value.setter
+    def value(self, value):
+        if self.valida_valores_numericos(value):
+            self.__value = value
+    
+    @property
+    def current_balance(self):
+        return self.__current_balance
+    @current_balance.setter
+    def current_balance(self, current_balance):
+        if self.valida_valores_numericos(current_balance):
+            self.__current_balance = current_balance
+    @property
+    def timestamp(self):
+        return self.__timestamp
+    @timestamp.setter
+    def timestamp(self, timestamp):
+        if self.valida_valores_numericos(timestamp):
+            self.__timestamp = timestamp
+
+    
+    def valida_valores_numericos(self, value: float):
+        if not isinstance(value, (int, float)):
+            raise ParamNotValidated('value', "must be a number")
         if value <= 0:
-            raise ValueError("O valor deve ser maior do que zero.")
-        else:
-            self.value = value
+            raise ParamNotValidated("value", "must be greater than zero")
         
-    def validar_current_balance(self, current_balance):
-        if type(current_balance) != float:
-            raise ValueError("O valor inserido é inválido.")
-        else:
-            if current_balance <= 0:
-                raise ValueError("O valor deve ser maior do que zero.")
-            else:
-                self.current_balance = current_balance
-        
+        return True
