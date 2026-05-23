@@ -13,16 +13,21 @@ from .entities.user import User
 
 from .repo.user_repository_mock import UserRepositoryMock
 
+from .repo.transacoes_repository_mock import TransacoesRepositoryMock
+
+import time
+
 
 app = FastAPI()
 
 repo = Environments.get_item_repo()()
 
-# a baixo estão as rotas da api
+# abaixo estão as rotas da api
 # elas interagem com os métodos de repositório. por exemplo a rota create item chama, não exclusivamente,
 # o método repo.create_item() para criar o item no nosso repositório
 
 user_repo = UserRepositoryMock()
+transacoes_repo = TransacoesRepositoryMock()
 
 @app.get("/items/get_all_items")
 def get_all_items():
@@ -146,10 +151,55 @@ def update_item(request: dict):
         "item_id": item_id,
         "item": item_updated.to_dict()    
     }
-    
+# Rota incial    
 @app.get("/")
 def get_user():
     user = user_repo.get_user()
     return user.to_dict()
+
+# Rota: deposit / user
+@app.post("/deposit")
+def deposit(request: dict):
+    value = request.get("value")
+    if value <= 0:
+        return {"error": "invalid value"}
+    user = user_repo.deposit(value)
+    timestamp = time.time() * 1000
+    transacao = Transacoes(
+        operacao="deposit",
+        valor=value,
+        saldo_atual=user.current_balance,
+        timestamp=timestamp
+    )
+    transacoes_repo.add_transacao(transacao)
+    return {
+        "current_balance": user.current_balance,
+        "timestamp": timestamp
+    }
+
+# Rota: withdraw / user
+@app.post("/withdraw")
+def withdraw(request: dict):
+    value = request.get("value")
+    if value <= 0:
+        return {"error": "invalid value"}
+    user = user_repo.get_user()
+    if user.current_balance < value:
+        return {"error": "insufficient balance"}
+    updated_user = user_repo.withdraw(value)
+    timestamp = time.time() * 1000
+    transacao = Transacoes(
+        operacao="withdraw",
+        valor=value,
+        saldo_atual=updated_user.current_balance,
+        timestamp=timestamp
+    )
+    transacoes_repo.add_transacao(transacao)
+    return {
+        "current_balance": updated_user.current_balance,
+        "timestamp": timestamp
+    }
+
+
 
 handler = Mangum(app, lifespan="off")
