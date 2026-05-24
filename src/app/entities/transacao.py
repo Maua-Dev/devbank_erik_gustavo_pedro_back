@@ -1,27 +1,41 @@
 from typing import Dict, Optional
 from zoneinfo import ZoneInfo
-
-from ..enums.transaction_type_enum import TransactionTypeEnum
 from datetime import datetime
+from ..entities.user import User
+from ..enums.transaction_type_enum import TransactionTypeEnum
 from ..errors.entity_errors import ParamNotValidated
 
 class Transacao:
+    __user = User
     __type: TransactionTypeEnum
     __value: float
     __current_balance: float
     __timestamp: int
 
-    def __init__(
+    def __init__( 
             self,
+            user: User,
             type: str,
-            value: float, 
-            current_balance: float, 
+            value: float,  
             ):
         
+        self.user = user
         self.type = type
         self.value = value
-        self.current_balance = current_balance
+        self.current_balance = user.current_balance + value if type == 'deposit' else user.current_balance - value
         self.timestamp = int(datetime.now(tz=ZoneInfo('America/Sao_Paulo')).timestamp() * 1000)
+
+        user.current_balance = self.current_balance
+
+
+    @property    
+    def user(self):
+        return self.__user
+    @user.setter
+    def user(self, user) -> Optional[None]:
+        if not isinstance(user, User):
+            raise ParamNotValidated('user', 'must be of type User')
+        self.__user = user
 
     @property
     def type(self):

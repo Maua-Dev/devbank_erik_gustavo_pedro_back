@@ -13,6 +13,7 @@ from .entities.user import User
 
 from .repo.user_repository_mock import UserRepositoryMock
 from .entities.transacao import Transacao
+from .repo.transacao_repository_mock import TransacaoRepositoryMock
 
 
 from datetime import datetime
@@ -28,6 +29,7 @@ repo = Environments.get_item_repo()()
 # o método repo.create_item() para criar o item no nosso repositório
 
 user_repo = UserRepositoryMock()
+transacao_repo = TransacaoRepositoryMock()
 
 @app.get("/items/get_all_items")
 def get_all_items():
@@ -160,44 +162,35 @@ def get_user():
 # Rota: deposit / user
 @app.post("/deposit")
 def deposit(request: dict):
-    value = request.get("value")
+    value = request.get("value", 0.00)
     if value <= 0:
         return {"error": "invalid value"}
-    user = user_repo.deposit(value)
-    timestamp = datetime.now(tz=ZoneInfo('America/Sao_Paulo')).timestamp()
+    user = user_repo.get_user()
     transacao = Transacao(
+        user=user,
         type="deposit",
         value=value,
-        current_balance=user.current_balance,
-        timestamp=timestamp
     )
-    return {
-        "current_balance": user.current_balance,
-        "timestamp": timestamp
-    }
+    transaction = transacao_repo.add_transaction(transacao, user)
+    return transacao.to_dict()
 
 # Rota: withdraw / user
 @app.post("/withdraw")
 def withdraw(request: dict):
-    value = request.get("value")
-    if value == float or value == int:
+    value = request.get("value", 0.00)
+    if isinstance(value, (float, int)):
         if value <= 0:
             return {"error": "invalid value"}
     user = user_repo.get_user()
     if user.current_balance < value:
         return {"error": "insufficient balance"}
-    updated_user = user_repo.withdraw(value)
-    timestamp = int(datetime.now().timestamp() * 1000)
     transacao = Transacao(
+        user=user,
         type="withdraw",
         value=value,
-        current_balance=updated_user.current_balance,
-        timestamp=timestamp
     )
-    return {
-        "current_balance": updated_user.current_balance,
-        "timestamp": timestamp
-    }
+    transaction = transacao_repo.add_transaction(transacao, user)
+    return transacao.to_dict()
 
 
 
