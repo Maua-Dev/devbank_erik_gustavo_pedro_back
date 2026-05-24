@@ -1,5 +1,6 @@
 from .transacao_repository_interface import ITransacaoRepository
 from ..entities.transacao import Transacao
+from ..entities.user import User
 from ..errors.entity_errors import ParamNotValidated
 
 from typing import Optional, List
@@ -31,7 +32,13 @@ class TransacaoRepositoryMock(ITransacaoRepository):
     def get_all_transactions(self) -> Optional[List[Transacao]]:
         return self.__transacoes
     
-    def add_transaction(self, transacao: Transacao) -> None:
+    def add_transaction(self, transacao: Transacao, user: User) -> None:
         if not isinstance(transacao, Transacao):
             raise ParamNotValidated('transaction', 'must be of type Transacao')
+        
+        if transacao.type.value == 'deposit' and transacao.value > user.current_balance * 2:
+            raise ValueError('suspicious deposit')
+        
+        if transacao.type.value == 'withdraw' and transacao.value > user.current_balance:
+            raise ValueError('Insufficient balance for withdrawal')
         self.__transacoes.append(transacao)

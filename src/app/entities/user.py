@@ -1,5 +1,6 @@
 from typing import Tuple, Dict
 from ..errors.entity_errors import ParamNotValidated
+import re
 
 class User:
 
@@ -27,7 +28,7 @@ class User:
     def name(self, name: str):
         self.valida_valores_str(name, 'name')
         if not 3 <= len(name) <= 40:
-            raise ParamNotValidated('name', 'deve ser maior que 3 e menor que 40')
+            raise ParamNotValidated('name', 'must be greater than 3 and less than 40')
         self.__name = name
 
     @property
@@ -37,7 +38,7 @@ class User:
     def agency(self, agency: str):
         self.valida_valores_str(agency, 'agency')
         if not len(agency) == 4:
-            raise ParamNotValidated('agency', 'deve ter tamanho igual a 4')
+            raise ParamNotValidated('agency', 'must have length equal to 4')
         self.__agency = agency
 
     @property
@@ -46,6 +47,9 @@ class User:
     @account.setter
     def account(self, account: str):
         self.valida_valores_str(account, 'account')
+        regex = r'^\d{4}-\d$'
+        if not re.search(regex, account):
+            raise ParamNotValidated('account', 'must be in the format 0000-0')
         self.__account = account
     
     @property
