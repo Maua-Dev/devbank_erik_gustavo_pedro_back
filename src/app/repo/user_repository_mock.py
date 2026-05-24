@@ -1,8 +1,6 @@
 from ..entities.user import User
 from ..entities.transacao import Transacao
 
-# mock armazena os dados de forma local
-# self user cria um usuário fixo na memória e devolve o resultado no return
 class UserRepositoryMock:
 
     user: User
@@ -17,12 +15,4 @@ class UserRepositoryMock:
         )
 
     def get_user(self) -> User:
-        return self.user
-
-    def deposit(self, value: float) -> User:
-        self.user.current_balance += value
-        return self.user
-
-    def withdraw( self, value: float) -> User:
-        self.user.current_balance -= value
         return self.user

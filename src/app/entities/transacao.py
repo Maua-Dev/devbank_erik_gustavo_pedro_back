@@ -56,6 +56,11 @@ class Transacao:
         if self.valida_valores_numericos(timestamp):
             self.__timestamp = timestamp
 
+    def to_dict(self):
+        return {
+            'current_balance': self.current_balance,
+            'timestamp': self.timestamp
+        }
     
     def valida_valores_numericos(self, value: float):
         if not isinstance(value, (int, float)):

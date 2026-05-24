@@ -1,13 +1,12 @@
-from typing import Tuple
-
-# Adiciona Caracteristicas do usuário (nome, agencia, conta e saldo)
+from typing import Tuple, Dict
+from ..errors.entity_errors import ParamNotValidated
 
 class User:
 
-    name: str
-    agency: str
-    account: str
-    current_balance: float
+    __name: str
+    __agency: str
+    __account: str
+    __current_balance: float
 
     def __init__(
         self,
@@ -16,78 +15,69 @@ class User:
         account: str,
         current_balance: float
     ):
-
-        validation_name = self.validate_name(name)
-        if not validation_name[0]:
-            raise ValueError(validation_name[1])
         self.name = name
-
-        validation_agency = self.validate_agency(agency)
-        if not validation_agency[0]:
-            raise ValueError(validation_agency[1])
         self.agency = agency
-
-        validation_account = self.validate_account(account)
-        if not validation_account[0]:
-            raise ValueError(validation_account[1])
         self.account = account
-
-        validation_balance = self.validate_balance(current_balance)
-        if not validation_balance[0]:
-            raise ValueError(validation_balance[1])
         self.current_balance = current_balance
 
+    @property
+    def name(self):
+        return self.__name
+    @name.setter
+    def name(self, name: str):
+        self.valida_valores_str(name, 'name')
+        if not 3 <= len(name) <= 40:
+            raise ParamNotValidated('name', 'deve ser maior que 3 e menor que 40')
+        self.__name = name
+
+    @property
+    def agency(self):
+        return self.__agency
+    @agency.setter
+    def agency(self, agency: str):
+        self.valida_valores_str(agency, 'agency')
+        if not len(agency) == 4:
+            raise ParamNotValidated('agency', 'deve ter tamanho igual a 4')
+        self.__agency = agency
+
+    @property
+    def account(self):
+        return self.__account
+    @account.setter
+    def account(self, account: str):
+        self.valida_valores_str(account, 'account')
+        self.__account = account
+    
+    @property
+    def current_balance(self):
+        return self.__current_balance
+    @current_balance.setter
+    def current_balance(self, current_balance: float):
+        if not current_balance:
+            raise ParamNotValidated('current balance', 'is required')
+        if not isinstance(current_balance, (float, int)):
+            raise ParamNotValidated('current balance', 'must be of type float')
+        if not current_balance >= 0:
+            raise ParamNotValidated('current balance', 'must be greater than zero')
+        self.__current_balance = current_balance
+
+
     @staticmethod
-    def validate_name(name: str) -> Tuple[bool, str]:
+    def valida_valores_str(string: str, param_name: str) -> None:
+        if not string:
+            raise ParamNotValidated(param_name, 'is required')
+        if not isinstance(string, str):
+            raise ParamNotValidated(param_name, 'must be of type str')
 
-        if name is None:
-            return (False, "Name is required")
+    def to_dict(self) -> Dict[str, str | str | str | float]:
+        name = self.name
+        agency = self.agency
+        account = self.account
+        current_balance = self.current_balance
 
-        if type(name) != str:
-            return (False, "Name must be string")
-
-        return (True, "")
-
-    @staticmethod
-    def validate_agency(agency: str) -> Tuple[bool, str]:
-
-        if agency is None:
-            return (False, "Agency is required")
-
-        if type(agency) != str:
-            return (False, "Agency must be string")
-
-        if len(agency) != 4:
-            return (False, "Agency must contain 4 digits")
-
-        return (True, "")
-
-    @staticmethod
-    def validate_account(account: str) -> Tuple[bool, str]:
-
-        if account is None:
-            return (False, "Account is required")
-
-        if type(account) != str:
-            return (False, "Account must be string")
-
-        return (True, "")
-
-    @staticmethod
-    def validate_balance(balance: float) -> Tuple[bool, str]:
-
-        if balance is None:
-            return (False, "Balance is required")
-
-        if type(balance) not in [float, int]:
-            return (False, "Balance must be numeric")
-
-        return (True, "")
-
-    def to_dict(self):
         return {
-            "name": self.name,
-            "agency": self.agency,
-            "account": self.account,
-            "current_balance": self.current_balance
+            "name":name,
+            "agency":agency,
+            "account":account,
+            "current_balance":current_balance
         }

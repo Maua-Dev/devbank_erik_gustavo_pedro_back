@@ -6,9 +6,10 @@ from ..entities.transacao import Transacao
 from ..enums.transaction_type_enum import TransactionTypeEnum
 
 class ITransacaoRepository(ABC):
+    __transacoes: List[Transacao]
 
     @abstractmethod
-    def get_all_transactions(self) -> list[Transacao]:
+    def get_all_transactions(self) -> List[Transacao]:
         
         """
 
@@ -29,7 +30,7 @@ class ITransacaoRepository(ABC):
 
         Args:
             transacao (Transacao): Objeto de Transacao
-        
         """
         pass
+
 

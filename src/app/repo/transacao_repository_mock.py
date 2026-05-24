@@ -2,14 +2,14 @@ from .transacao_repository_interface import ITransacaoRepository
 from ..entities.transacao import Transacao
 from ..errors.entity_errors import ParamNotValidated
 
-from typing import Optional, Dict, List
+from typing import Optional, List
 
 from datetime import datetime
 
 class TransacaoRepositoryMock(ITransacaoRepository):
-    __transacoes: list[Transacao]
+    __transacoes: List[Transacao]
 
-    def __init__(self, transacoes: list[Transacao]) -> None:
+    def __init__(self, transacoes: List[Transacao]) -> None:
         self.transacoes = [
             Transacao(
                 type='deposit',
@@ -28,15 +28,10 @@ class TransacaoRepositoryMock(ITransacaoRepository):
             )
         ]
 
-    @property
-    def transacoes(self):
-        return  self.__transacoes     
-    @transacoes.setter
-    def transacoes(self, transacoes: list[Transacao]):
-        if not all(isinstance(transacao, Transacao) for transacao in transacoes):
-            raise ParamNotValidated('transacoes', 'must contain only Transacao instances')
-        self.__transacoes = transacoes
-
     def get_all_transactions(self) -> Optional[List[Transacao]]:
-
-        return super().get_all_transactions()
+        return self.__transacoes
+    
+    def add_transaction(self, transacao: Transacao) -> None:
+        if not isinstance(transacao, Transacao):
+            raise ParamNotValidated('transaction', 'must be of type Transacao')
+        self.__transacoes.append(transacao)
