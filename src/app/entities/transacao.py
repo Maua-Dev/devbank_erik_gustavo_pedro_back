@@ -84,7 +84,7 @@ class Transacao:
     def to_dict(self) -> Dict[str, float | int]:
         return {
             'current_balance': self.current_balance,
-            'timestamp': 1
+            'timestamp': self.timestamp
         }
 
     def to_dict_history(self) -> Dict[str, str | float | float | int]:

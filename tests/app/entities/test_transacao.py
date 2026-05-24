@@ -93,7 +93,7 @@ class Test_Transacao:
         t1_dict = t1.to_dict()
 
         assert isinstance(t1_dict, dict)
-        assert t1_dict == {'current_balance': 1100, 'timestamp':  int(datetime.now(tz=ZoneInfo('America/Sao_Paulo')).timestamp() * 1000)}
+        assert t1_dict == {'current_balance': 1100, 'timestamp': t1.timestamp}
 
     def test_transacao_to_dict_history(self):
         t1 = Transacao(
