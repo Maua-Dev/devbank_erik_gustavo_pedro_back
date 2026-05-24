@@ -14,6 +14,7 @@ from .entities.user import User
 from .repo.user_repository_mock import UserRepositoryMock
 from .entities.transacao import Transacao
 from .repo.transacao_repository_mock import TransacaoRepositoryMock
+from typing import Dict
 
 
 from datetime import datetime
@@ -162,7 +163,7 @@ def get_user():
 # Rota: deposit / user
 @app.post("/deposit")
 def deposit(request: dict):
-    value = request.get("value", 0.00)
+    value = sum(value * int(key) for key, value in request.items())
     if value <= 0:
         return {"error": "invalid value"}
     user = user_repo.get_user()
@@ -171,13 +172,13 @@ def deposit(request: dict):
         type="deposit",
         value=value,
     )
-    transaction = transacao_repo.add_transaction(transacao, user)
+    transaction = transacao_repo.add_transaction(transacao)
     return transacao.to_dict()
 
 # Rota: withdraw / user
 @app.post("/withdraw")
 def withdraw(request: dict):
-    value = request.get("value", 0.00)
+    value = sum(value * int(key) for key, value in request.items())
     if isinstance(value, (float, int)):
         if value <= 0:
             return {"error": "invalid value"}
@@ -189,7 +190,7 @@ def withdraw(request: dict):
         type="withdraw",
         value=value,
     )
-    transaction = transacao_repo.add_transaction(transacao, user)
+    transaction = transacao_repo.add_transaction(transacao)
     return transacao.to_dict()
 
 
