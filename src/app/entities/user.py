@@ -40,7 +40,7 @@ class User:
     def agency(self, agency: str):
         self.valida_valores_str(agency, 'agency')
         if not re.match(r"^\d{4}$", agency):
-            raise ParamNotValidated('agency', 'formato inválido')
+            raise ParamNotValidated('agency', 'must be in the format 0000')
         self.__agency = agency
 
     @property
@@ -51,7 +51,7 @@ class User:
     def account(self, account: str):
         self.valida_valores_str(account, 'account')
         if not re.match(r"^\d{5}-\d$", account):
-            raise ParamNotValidated('account', 'formato inválido')
+            raise ParamNotValidated('account', 'must be in the format 00000-0')
         self.__account = account
     
     @property
