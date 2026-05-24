@@ -33,4 +33,16 @@ class ITransacaoRepository(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_all_transactions_to_dict(self) -> Dict[str, List[Dict[str, Union[str, float, int]]]]:
 
+        """
+
+        Recupera todos as transacoes realizadas e as retorna em formato de dicionario, ordenadas por timestamp decrescente
+
+        Tipo de retorno:
+            Lista com objetos de Transacao
+
+        """
+
+        pass

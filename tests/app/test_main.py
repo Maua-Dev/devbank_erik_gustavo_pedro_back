@@ -1,5 +1,8 @@
 from fastapi.exceptions import HTTPException
 import pytest
+
+from datetime import datetime
+from zoneinfo import ZoneInfo
 import src.app.main as main_module
 from src.app.main import get_all_items, get_item, create_item, delete_item, update_item
 from src.app.repo.item_repository_mock import ItemRepositoryMock
@@ -289,4 +292,35 @@ class Test_Main:
         with pytest.raises(HTTPException) as err:
             update_item(request=body)
         assert err.value.status_code == 400
-            
+    def test_post_deposit(self):
+        body = {
+            '2': 1,
+            '5': 2,
+            '10': 1,
+            '20': 5,
+            '50': 1,
+            '100': 3,
+            '200': 1
+        }
+
+        response = main_module.deposit(request=body)
+        assert response == {
+            'current_balance': 1672,
+            'timestamp': 1
+        }
+    def test_post_withdraw(self):
+        body = {
+            '2': 1,
+            '5': 0,
+            '10': 0,
+            '20': 0,
+            '50': 0,
+            '100': 0,
+            '200': 0
+        }
+
+        response = main_module.withdraw(request=body)
+        assert response == {
+            'current_balance': 1670,
+            'timestamp': 1
+        }

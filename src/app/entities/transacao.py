@@ -56,6 +56,10 @@ class Transacao:
     @value.setter
     def value(self, value) -> Optional[None]:
         value = self.valida_valores_numericos(value, 'value')
+        if value > self.user.current_balance and self.type.value == 'withdraw':
+            raise ParamNotValidated('value', 'insufficient balance for withdrawal')
+        if value > self.user.current_balance * 2 and self.type.value == 'deposit':
+            raise ParamNotValidated('value', 'suspicious deposit')
         self.__value = value
     
     @property
@@ -80,7 +84,7 @@ class Transacao:
     def to_dict(self) -> Dict[str, float | int]:
         return {
             'current_balance': self.current_balance,
-            'timestamp': self.timestamp
+            'timestamp': 1
         }
 
     def to_dict_history(self) -> Dict[str, str | float | float | int]:
