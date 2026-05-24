@@ -306,7 +306,7 @@ class Test_Main:
         response = main_module.deposit(request=body)
         assert response == {
             'current_balance': 1672,
-            'timestamp': 1
+            'timestamp': int(datetime.now(tz=ZoneInfo('America/Sao_Paulo')).timestamp() * 1000)
         }
     def test_post_withdraw(self):
         body = {
@@ -322,5 +322,5 @@ class Test_Main:
         response = main_module.withdraw(request=body)
         assert response == {
             'current_balance': 1670,
-            'timestamp': 1
+            'timestamp': int(datetime.now(tz=ZoneInfo('America/Sao_Paulo')).timestamp() * 1000)
         }

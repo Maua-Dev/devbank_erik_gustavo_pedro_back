@@ -109,5 +109,5 @@ class Test_Transacao:
             'type': 'deposit',
             'value': 100,
             'current_balance': 1100,
-            'timestamp': int(datetime.now(tz=ZoneInfo('America/Sao_Paulo')).timestamp() * 1000)
+            'timestamp': t1.timestamp
         }
