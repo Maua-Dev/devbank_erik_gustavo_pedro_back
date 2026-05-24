@@ -1,6 +1,8 @@
 from typing import Tuple, Dict
 from ..errors.entity_errors import ParamNotValidated
+import re
 
+# validações dos atributos do usuario (name, agency, account e current balance)
 class User:
 
     __name: str
@@ -33,19 +35,23 @@ class User:
     @property
     def agency(self):
         return self.__agency
+
     @agency.setter
     def agency(self, agency: str):
         self.valida_valores_str(agency, 'agency')
-        if not len(agency) == 4:
-            raise ParamNotValidated('agency', 'deve ter tamanho igual a 4')
+        if not re.match(r"^\d{4}$", agency):
+            raise ParamNotValidated('agency', 'formato inválido')
         self.__agency = agency
 
     @property
     def account(self):
         return self.__account
+
     @account.setter
     def account(self, account: str):
         self.valida_valores_str(account, 'account')
+        if not re.match(r"^\d{5}-\d$", account):
+            raise ParamNotValidated('account', 'formato inválido')
         self.__account = account
     
     @property
