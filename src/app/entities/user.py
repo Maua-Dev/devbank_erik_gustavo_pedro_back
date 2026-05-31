@@ -85,3 +85,6 @@ class User:
             "account":account,
             "current_balance":current_balance
         }
+    
+    def __str__(self) -> str:
+        return f"User(name={self.name}, agency={self.agency}, account={self.account}, current_balance={self.current_balance})"

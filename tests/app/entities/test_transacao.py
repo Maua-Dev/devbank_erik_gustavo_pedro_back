@@ -111,3 +111,20 @@ class Test_Transacao:
             'current_balance': 1100,
             'timestamp': t1.timestamp
         }
+
+    def test_transacao_withdraw_insufficient_balance(self):
+        user = User('Vitor Soller', '0000', '00000-0', 100.0)
+        with pytest.raises(ParamNotValidated):
+            t1 = Transacao(
+                user=user,
+                type='withdraw',
+                value=200.0,
+            )
+    def test_transacao_deposit_suspicious(self):
+        user = User('Vitor Soller', '0000', '00000-0', 100.0)
+        with pytest.raises(ParamNotValidated):
+            t1 = Transacao(
+                user=user,
+                type='deposit',
+                value=300.0,
+            )

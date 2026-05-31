@@ -162,35 +162,34 @@ def get_user():
 
 # Rota: deposit / user
 @app.post("/deposit")
-def deposit(request: dict):
-    value = sum(value * int(key) for key, value in request.items())
-    if value <= 0:
-        return {"error": "invalid value"}
+def deposit(request: dict): 
     user = user_repo.get_user()
-    transacao = Transacao(
-        user=user,
-        type="deposit",
-        value=value,
-    )
-    transaction = transacao_repo.add_transaction(transacao)
+    print(user)
+    value = sum(value * int(key) for key, value in request.items())
+
+    try:
+        transacao = Transacao(user=user, type="deposit", value=value)
+    except ParamNotValidated as err:
+        raise HTTPException(status_code=400, detail=err.message)
+    
+    transacao_repo.add_transaction(transacao)
     return transacao.to_dict()
 
 # Rota: withdraw / user
 @app.post("/withdraw")
 def withdraw(request: dict):
-    value = sum(value * int(key) for key, value in request.items())
-    if isinstance(value, (float, int)):
-        if value <= 0:
-            return {"error": "invalid value"}
     user = user_repo.get_user()
-    if user.current_balance < value:
-        return {"error": "insufficient balance"}
-    transacao = Transacao(
-        user=user,
-        type="withdraw",
-        value=value,
-    )
-    transaction = transacao_repo.add_transaction(transacao)
+    value = sum(value * int(key) for key, value in request.items())
+    try:
+        transacao = Transacao(
+            user=user,
+            type="withdraw",
+            value=value,
+        )
+    except ParamNotValidated as err:
+        raise HTTPException(status_code=400, detail=err.message)
+    
+    transacao_repo.add_transaction(transacao)
     return transacao.to_dict()
 
 @app.get("/history")

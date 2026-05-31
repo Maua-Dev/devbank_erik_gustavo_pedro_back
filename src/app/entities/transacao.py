@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 from zoneinfo import ZoneInfo
 from datetime import datetime
-from .user import User
+from ..entities.user import User
 from ..enums.transaction_type_enum import TransactionTypeEnum
 from ..errors.entity_errors import ParamNotValidated
 
@@ -58,7 +58,8 @@ class Transacao:
         value = self.valida_valores_numericos(value, 'value')
         if value > self.user.current_balance and self.type.value == 'withdraw':
             raise ParamNotValidated('value', 'insufficient balance for withdrawal')
-        if value > self.user.current_balance * 2 and self.type.value == 'deposit':
+        
+        if value >= (self.user.current_balance * 2) and self.type.value == 'deposit':
             raise ParamNotValidated('value', 'suspicious deposit')
         self.__value = value
     

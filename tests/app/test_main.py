@@ -324,3 +324,50 @@ class Test_Main:
             'current_balance': 1670,
             'timestamp': timestamp
         }
+
+    def test_post_withdraw_insufficient_balance(self):
+        body = {
+            '2': 0,
+            '5': 0,
+            '10': 0,
+            '20': 0,
+            '50': 0,
+            '100': 0,
+            '200': 10
+        }
+
+        with pytest.raises(HTTPException) as err:
+            main_module.withdraw(request=body)
+        assert err.value.status_code == 400
+
+
+    def test_post_deposit_invalid_value(self):
+        body = {
+            '2': -1,
+            '5': 0,
+            '10': 0,
+            '20': 0,
+            '50': 0,
+            '100': 0,
+            '200': 0
+        }
+
+        with pytest.raises(HTTPException) as err:
+            main_module.deposit(request=body)
+        assert err.value.status_code == 400
+
+    def test_post_deposit_suspicious_value(self):
+        body = {
+            '2': 0,
+            '5': 0,
+            '10': 0,
+            '20': 2,
+            '50': 0,
+            '100': 13,
+            '200': 10,
+        }
+
+        with pytest.raises(HTTPException) as err:
+            main_module.deposit(request=body)
+            
+        assert err.value.status_code == 400
