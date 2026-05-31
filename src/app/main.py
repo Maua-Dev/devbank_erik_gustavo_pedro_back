@@ -193,7 +193,7 @@ def withdraw(request: dict):
     transaction = transacao_repo.add_transaction(transacao)
     return transacao.to_dict()
 
-@app.get("/history/")
+@app.get("/history")
 def get_history():
     return transacao_repo.get_all_transactions_to_dict()
 
