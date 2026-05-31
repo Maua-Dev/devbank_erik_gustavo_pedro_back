@@ -59,8 +59,6 @@ class User:
         return self.__current_balance
     @current_balance.setter
     def current_balance(self, current_balance: float):
-        if not current_balance:
-            raise ParamNotValidated('current balance', 'is required')
         if not isinstance(current_balance, (float, int)):
             raise ParamNotValidated('current balance', 'must be of type float')
         if not current_balance >= 0:
