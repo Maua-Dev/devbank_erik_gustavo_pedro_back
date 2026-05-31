@@ -8,3 +8,4 @@ colorama==0.4.6
 coverage==7.14.0
 fastapi==0.135.1
 tzdata==2026.2
+mangum==0.21.0
