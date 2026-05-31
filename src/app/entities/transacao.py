@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 from zoneinfo import ZoneInfo
 from datetime import datetime
-from .entities.user import User
+from .user import User
 from ..enums.transaction_type_enum import TransactionTypeEnum
 from ..errors.entity_errors import ParamNotValidated
 
